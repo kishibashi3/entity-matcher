@@ -1,6 +1,25 @@
+/*
+ * Copyright 2015-2016 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package jp.ubiosis.tools.entitymatcher;
 
+import static jp.ubiosis.tools.entitymatcher.AttributeMatcher.expand;
+
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Function;
 
@@ -13,69 +32,83 @@ import org.hamcrest.Matchers;
 import com.google.common.collect.Lists;
 
 import jp.ubiosis.tools.entitymatcher.annotation.AssertField;
-import jp.ubiosis.tools.entitymatcher.annotation.AssertField.IfNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.ToString;
+import jp.ubiosis.tools.entitymatcher.annotation.AssertModels;
+import jp.ubiosis.tools.entitymatcher.annotation.AssertField.Rule;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class EntityMatcher<M> extends BaseMatcher<M> {
 
-	private Matcher<M> matcher;
+    private Matcher<M> matcher;
 
-	public EntityMatcher(AssertModel<M> expected) {
-		List<Matcher<? super M>> matchers = Lists.newArrayList();
-		try{
-			for (Class<?> c = expected.getClass(); c != Object.class; c = c.getSuperclass()) {
-				for (Field f : c.getDeclaredFields()) {
-					f.setAccessible(true);
-					Object field = f.get(expected);
+    public EntityMatcher(AssertModel<M> expected) {
+        List<Matcher<? super M>> matchers = Lists.newArrayList();
+        AssertModels models = expected.getClass().getAnnotation(AssertModels.class);
+        boolean getter = models==null? false : models.getter();
+        
+        try{
+            for (Class<?> c = expected.getClass(); c != Object.class; c = c.getSuperclass()) {
+                for (Field f : c.getDeclaredFields()) {
+                    f.setAccessible(true);
+                    Object field = f.get(expected);
+                    String name = f.getName();
 
-					AssertField af = f.getAnnotation(AssertField.class);
+                    AssertField af = f.getAnnotation(AssertField.class);
 
-					if(af!=null && af.ifNull()==IfNull.SKIP && field==null){
-						continue;
-					}else{
-						Matcher<?> matcher = field instanceof Matcher ? (Matcher<?>) field : Matchers.is(f.get(expected));
-						AttributeMatcher<M,?> unit = new AttributeMatcher<>( f.getName(), field(f.getName()), matcher );
-						matchers.add(unit);
-					}
-				}
-			}
-		}catch(Exception e){
-			throw new AssertionError(e);
-		}
-		matchers.forEach(m -> log.info("matcher = {}", m));
-		matcher = Matchers.allOf(matchers);
-	}
-	@Override
-	public boolean matches(Object actual) {
-		return matcher.matches(actual);
-	}
+                    if(af!=null && af.skipIfNull() && field==null) continue;
+                    Rule rule = field instanceof Matcher ? Rule.MATCHER : af==null ? Rule.IS :af.rule();
+                    
+                    matchers.add( expand( name, getter ? get(name) : field(name), rule.matcher(field) ));
+                }
+            }
+        }catch(SecurityException | IllegalAccessException e){
+            throw new AssertionError("illegal assert model" , e);
+        }
+        matchers.forEach(m -> log.info("matcher = {}", m));
+        matcher = Matchers.allOf(matchers);
+    }
+    @Override
+    public boolean matches(Object actual) {
+        return matcher.matches(actual);
+    }
 
-	@Override
-	public void describeTo(Description desc) {
-		desc.appendText("entity fields");
-		matcher.describeTo(desc);
-	}
+    @Override
+    public void describeTo(Description desc) {
+        desc.appendText("entity fields");
+        matcher.describeTo(desc);
+    }
 
-	@SuppressWarnings("unchecked")
-	private static <M,A> Function<M,A> field(String fieldName){
+    @SuppressWarnings("unchecked")
+    private static <M,A> Function<M,A> field(String fieldName){
 
-		return m -> {
-			try {
-				Field f = m.getClass().getDeclaredField(fieldName);
-				f.setAccessible(true);
-				return (A)f.get(m);
-			} catch (Exception e) {
-				throw new AssertionError(e);
-			}
-		};
-	}
+        return m -> {
+            try {
+                Field f = m.getClass().getDeclaredField(fieldName);
+                f.setAccessible(true);
+                return (A)f.get(m);
+            } catch (NoSuchFieldException | IllegalAccessException | SecurityException e) {
+                throw new AssertionError("illegal assert model.", e);
+            }
+        };
+    }
+    @SuppressWarnings("unchecked")
+    private static <M,A> Function<M,A> get(String fieldName){
 
-	@Factory
-	public static <M> Matcher<M> assertEntity(AssertModel<M> expected){
-		return new EntityMatcher<>(expected);
-	}
+        return m -> {
+            try {
+                Method mm = m.getClass().getDeclaredMethod("get" + fieldName.substring(0,1).toUpperCase() + fieldName.substring(1));
+                mm.setAccessible(true);
+                return (A)mm.invoke(m);
+            } catch (NoSuchMethodException | IllegalAccessException | SecurityException e) {
+                throw new AssertionError("illegal assert model.", e);
+            } catch (IllegalArgumentException | InvocationTargetException e) {
+                throw new AssertionError("illegal assert model.", e);
+            }
+        };
+    }
+
+    @Factory
+    public static <M> Matcher<M> assertEntity(AssertModel<M> expected){
+        return new EntityMatcher<>(expected);
+    }
 }
