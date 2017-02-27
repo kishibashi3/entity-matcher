@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jp.ubiosis.tools.entitymatcher;
+package com.ubiosis.tools.hamcrest.entitymatcher;
 
-import static jp.ubiosis.tools.entitymatcher.AttributeMatcher.expand;
+import static com.ubiosis.tools.hamcrest.entitymatcher.AttributeMatcher.expand;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -29,24 +30,31 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
-import com.google.common.collect.Lists;
+import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertField;
+import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertModels;
+import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertField.Rule;
 
-import jp.ubiosis.tools.entitymatcher.annotation.AssertField;
-import jp.ubiosis.tools.entitymatcher.annotation.AssertModels;
-import jp.ubiosis.tools.entitymatcher.annotation.AssertField.Rule;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * JUnit Matcher of Every Entities.
+ * 
+ * @author ishibashi.kazuhiro@u-biosis.com
+ * @param <M> asserting model class type.
+ * @see AssertModel
+ */
 @Log4j2
 public class EntityMatcher<M> extends BaseMatcher<M> {
 
     private Matcher<M> matcher;
 
     public EntityMatcher(AssertModel<M> expected) {
-        List<Matcher<? super M>> matchers = Lists.newArrayList();
+        List<Matcher<? super M>> matchers = new ArrayList<>();
+        
         AssertModels models = expected.getClass().getAnnotation(AssertModels.class);
         boolean getter = models==null? false : models.getter();
         
-        try{
+        try {
             for (Class<?> c = expected.getClass(); c != Object.class; c = c.getSuperclass()) {
                 for (Field f : c.getDeclaredFields()) {
                     f.setAccessible(true);
@@ -106,7 +114,12 @@ public class EntityMatcher<M> extends BaseMatcher<M> {
             }
         };
     }
-
+    /**
+     * assert factory method.
+     * 
+     * @param expected expected object.
+     * @return matcher
+     */
     @Factory
     public static <M> Matcher<M> assertEntity(AssertModel<M> expected){
         return new EntityMatcher<>(expected);

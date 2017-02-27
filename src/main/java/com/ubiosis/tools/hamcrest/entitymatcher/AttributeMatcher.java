@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jp.ubiosis.tools.entitymatcher;
+package com.ubiosis.tools.hamcrest.entitymatcher;
 
 import java.util.function.Function;
 
@@ -25,12 +25,22 @@ import org.hamcrest.Matcher;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 
+/**
+ * Assert entity's field.
+ * 
+ * @author ishibashi.kazuhiro@u-biosis.com
+ *
+ * @param <M> entity type.
+ * @param <A> field type.
+ */
 @AllArgsConstructor
 @ToString
-class AttributeMatcher<M,A> extends BaseMatcher<M>{
+public class AttributeMatcher<M,A> extends BaseMatcher<M>{
+    
     private String title;
     private Function<M,A> getter;
     private Matcher<A> matcher;
+    
     @Override
     public void describeTo(Description desc) {
         desc.appendText(title + " ");
@@ -41,11 +51,16 @@ class AttributeMatcher<M,A> extends BaseMatcher<M>{
     public boolean matches(Object actual) {
         return matcher.matches( getter.apply((M)actual) );
     }
-    
+    /**
+     * assert method factory.
+     * 
+     * @param title assert description about attribute to assert.
+     * @param getter converter of model to attribute.
+     * @param matcher attribute matcher.
+     * @return
+     */
     @Factory
     public static <M,A> Matcher<M> expand(String title, Function<M,A> getter, Matcher<A> matcher){
         return new AttributeMatcher<>(title, getter, matcher);
     }
-    
-    
 }

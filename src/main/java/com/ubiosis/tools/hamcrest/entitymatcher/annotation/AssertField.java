@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jp.ubiosis.tools.entitymatcher.annotation;
+package com.ubiosis.tools.hamcrest.entitymatcher.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,24 +23,50 @@ import java.lang.annotation.Target;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
-import jp.ubiosis.tools.entitymatcher.RegexMatcher;
+import com.ubiosis.tools.hamcrest.entitymatcher.RegexMatcher;
 
+/**
+ * AssertModel's field setting.
+ * 
+ * @author ishibashi.kazuhiro@u-biosis.com
+ * @see ../AssertModel
+ *
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AssertField {
 
+    /**
+     * assertion about null value.
+     * 
+     * @return {@code true}: skip assertion. {@code false}: assert null as a value.
+     */
     boolean skipIfNull() default true;
 
+    /**
+     * asserting rule.
+     * 
+     * @return rule.
+     */
     Rule rule() default Rule.IS;
 
 
+    /**
+     * Asserting rules.
+     */
     public enum Rule{
+        /**
+         * assert by Asserts.is
+         */
         IS {
             @Override
             public Matcher<?> matcher(Object o){
                 return Matchers.is(o);
             }
         } , 
+        /**
+         * assert by Asserts.compare
+         */
         COMPARE{
             @SuppressWarnings({ "unchecked", "rawtypes" })
             @Override
@@ -48,12 +74,18 @@ public @interface AssertField {
                 return Matchers.comparesEqualTo((Comparable)o);
             }
         }, 
+        /**
+         * assert by RegexMatcher.
+         */
         REGEX {
             @Override
             public Matcher<?> matcher(Object o){
                 return new RegexMatcher<>(o.toString());
             }
         },
+        /**
+         * assert by value itself.
+         */
         MATCHER {
             @Override
             public Matcher<?> matcher(Object o){
@@ -61,6 +93,12 @@ public @interface AssertField {
             }
         }; 
 
+        /**
+         * asserting 
+         * 
+         * @param o
+         * @return
+         */
         public abstract Matcher<?> matcher(Object o);
     }
 }

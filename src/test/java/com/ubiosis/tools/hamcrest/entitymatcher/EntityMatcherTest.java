@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jp.ubiosis.tools.entitymatcher;
+package com.ubiosis.tools.hamcrest.entitymatcher;
 
-import static jp.ubiosis.tools.entitymatcher.EntityMatcher.assertEntity;
+import static com.ubiosis.tools.hamcrest.entitymatcher.EntityMatcher.assertEntity;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.lessThan;
@@ -26,9 +26,11 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import jp.ubiosis.tools.entitymatcher.annotation.AssertField;
-import jp.ubiosis.tools.entitymatcher.annotation.AssertField.Rule;
-import jp.ubiosis.tools.entitymatcher.annotation.AssertModels;
+import com.ubiosis.tools.hamcrest.entitymatcher.AssertModel;
+import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertField;
+import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertModels;
+import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertField.Rule;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
