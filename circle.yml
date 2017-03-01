@@ -61,7 +61,13 @@ dependencies:
 #        RAILS_ENV=test
 #        RACK_ENV=test
 
-
+deployment:
+  deploy:
+    branch: master
+    commands:
+      - make build
+      - make deploy
+      
 ########################
 # Custom notifications
 ########################
