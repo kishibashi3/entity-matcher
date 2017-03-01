@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/kishibashi3/entity-matcher/tree/master.svg?style=svg)](https://circleci.com/gh/kishibashi3/entity-matcher/tree/master)
+[![CircleCI](https://circleci.com/gh/kishibashi3/entity-matcher/tree/master.svg?style=shield)](https://circleci.com/gh/kishibashi3/entity-matcher/tree/master)
 
 entity matcher
 ---
