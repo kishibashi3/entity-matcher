@@ -95,4 +95,7 @@ public class Accessor {
         throw new NoSuchFieldError(name);
     }
 
+    public static String getterName(String fieldName) {
+        return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
+    }
 }

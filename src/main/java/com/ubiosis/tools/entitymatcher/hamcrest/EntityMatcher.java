@@ -16,6 +16,7 @@
 package com.ubiosis.tools.entitymatcher.hamcrest;
 
 import static com.ubiosis.tools.entitymatcher.hamcrest.AttributeMatcher.expand;
+import static org.hamcrest.CoreMatchers.allOf;
 
 import java.util.Map;
 import java.util.function.Function;
@@ -27,7 +28,6 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import com.google.common.collect.ImmutableMap;
-import com.ubiosis.tools.entitymatcher.core.Accessor;
 import com.ubiosis.tools.entitymatcher.core.EntityMatchingExtractor;
 import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
 import com.ubiosis.tools.entitymatcher.model.AssertModel;
@@ -52,9 +52,10 @@ public class EntityMatcher<M> extends BaseMatcher<M> {
     private final Matcher<M> matcher;
 
     public EntityMatcher(AssertModel<M> expected) {
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         EntityMatchingExtractor<M, Matcher<? super M>> extractor = new EntityMatchingExtractor<M, Matcher<? super M>>(
-                (name, rule, field) -> expand(name, Accessor.field(name), functions.get(rule).apply(field)));
-        matcher = Matchers.allOf(extractor.extract(expected));
+                (name, rule, field, actGetter) -> expand(name, (Function) actGetter, functions.get(rule).apply(field)));
+        matcher = allOf(extractor.extract(expected));
     }
 
     @Override

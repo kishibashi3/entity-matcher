@@ -3,20 +3,21 @@ package com.ubiosis.tools.entitymatcher.core;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import com.ubiosis.tools.entitymatcher.model.AssertField;
+import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
 import com.ubiosis.tools.entitymatcher.model.AssertModel;
 import com.ubiosis.tools.entitymatcher.model.AssertModels;
-import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class EntityMatchingExtractor<M, V> {
 
-    TriFunction<String, Rule, Object, V> function;
+    Function4<String, Rule, Object, Function<M, ?>, V> function;
 
-    public EntityMatchingExtractor(TriFunction<String, Rule, Object, V> function) {
+    public EntityMatchingExtractor(Function4<String, Rule, Object, Function<M, ?>, V> function) {
         this.function = function;
     }
 
@@ -35,9 +36,13 @@ public class EntityMatchingExtractor<M, V> {
 
                     AssertField af = f.getAnnotation(AssertField.class);
 
+                    Function<M, ?> actualGetter = getter
+                            ? m -> Accessor.get(Accessor.getterName(name)).apply(m)
+                            : m -> Accessor.field(name).apply(m);
+
                     if (af == null || !af.skipIfNull() || field != null) {
                         Rule rule = af == null ? Rule.IS : af.rule();
-                        matchers.add(function.apply(name, rule, field));
+                        matchers.add(function.apply(name, rule, field, actualGetter));
                     }
                 }
             }
