@@ -4,10 +4,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ubiosis.tools.entitymatcher.annotation.AssertField;
-import com.ubiosis.tools.entitymatcher.annotation.AssertField.Rule;
-import com.ubiosis.tools.entitymatcher.annotation.AssertModel;
-import com.ubiosis.tools.entitymatcher.annotation.AssertModels;
+import com.ubiosis.tools.entitymatcher.model.AssertField;
+import com.ubiosis.tools.entitymatcher.model.AssertModel;
+import com.ubiosis.tools.entitymatcher.model.AssertModels;
+import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -35,10 +35,10 @@ public class EntityMatchingExtractor<M, V> {
 
                     AssertField af = f.getAnnotation(AssertField.class);
 
-                    if (af != null && af.skipIfNull() && field == null)
-                        continue;
-                    Rule rule = af == null ? Rule.IS : af.rule();
-                    matchers.add(function.apply(name, rule, field));
+                    if (af == null || !af.skipIfNull() || field != null) {
+                        Rule rule = af == null ? Rule.IS : af.rule();
+                        matchers.add(function.apply(name, rule, field));
+                    }
                 }
             }
         } catch (SecurityException | IllegalAccessException e) {

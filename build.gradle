@@ -10,6 +10,9 @@ buildscript {
 // basic plugins
 apply plugin: "java"
 apply plugin: "eclipse"
+apply plugin: "checkstyle"
+apply plugin: "findbugs"
+
 
 group = "com.ubiosis.tools"
 ext.artifactId = "entity-matcher"
@@ -26,17 +29,23 @@ repositories {
 }
 
 dependencies {
-
+	// utils
 	compile group: 'com.google.guava', name: 'guava', version: '21.0'
+	// logging
 	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8'
 	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8'
+	// testing
 	compile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 	compile group: 'org.assertj', name: 'assertj-core', version: '3.6.2'
-	
-	testCompile group: 'junit', name: 'junit', version: '4.12'
 	compile group: 'org.projectlombok', name: 'lombok', version: '1.16.4'
+	// yaml
+	compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.8.7'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.8.7'
+	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.7'
+	
+	// test only.
+	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'org.yaml', name: 'snakeyaml', version: '1.18'
-	testCompile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.8.7'
 	
 }
 

@@ -26,10 +26,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
-import com.ubiosis.tools.entitymatcher.annotation.AssertField;
-import com.ubiosis.tools.entitymatcher.annotation.AssertField.Rule;
-import com.ubiosis.tools.entitymatcher.annotation.AssertModel;
-import com.ubiosis.tools.entitymatcher.annotation.AssertModels;
+import com.ubiosis.tools.entitymatcher.model.AssertField;
+import com.ubiosis.tools.entitymatcher.model.AssertModel;
+import com.ubiosis.tools.entitymatcher.model.AssertModels;
+import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
