@@ -1,3 +1,4 @@
 
 rootProject.name = 'entity-matcher'
 
+rootProject.buildFileEncoding = "UTF-8"

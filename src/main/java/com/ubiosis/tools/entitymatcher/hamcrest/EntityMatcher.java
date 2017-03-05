@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ubiosis.tools.hamcrest.entitymatcher;
+package com.ubiosis.tools.entitymatcher.hamcrest;
 
-import static com.ubiosis.tools.hamcrest.entitymatcher.AttributeMatcher.expand;
+import static com.ubiosis.tools.entitymatcher.hamcrest.AttributeMatcher.expand;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -30,9 +30,10 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
-import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertField;
-import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertModels;
-import com.ubiosis.tools.hamcrest.entitymatcher.annotation.AssertField.Rule;
+import com.ubiosis.tools.entitymatcher.annotation.AssertField;
+import com.ubiosis.tools.entitymatcher.annotation.AssertModel;
+import com.ubiosis.tools.entitymatcher.annotation.AssertModels;
+import com.ubiosis.tools.entitymatcher.annotation.AssertField.Rule;
 
 import lombok.extern.log4j.Log4j2;
 

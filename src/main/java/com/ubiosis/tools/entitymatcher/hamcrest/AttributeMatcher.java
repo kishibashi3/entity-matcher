@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ubiosis.tools.hamcrest.entitymatcher;
+package com.ubiosis.tools.entitymatcher.hamcrest;
 
 import java.util.function.Function;
 

@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ubiosis.tools.hamcrest.entitymatcher;
+package com.ubiosis.tools.entitymatcher.annotation;
+
+import com.ubiosis.tools.entitymatcher.hamcrest.EntityMatcher;
+
 /**
  * Mark interface to indicate the class is an AssertModel of {@code <M>}.
  * 

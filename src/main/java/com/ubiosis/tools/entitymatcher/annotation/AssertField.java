@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ubiosis.tools.hamcrest.entitymatcher.annotation;
+package com.ubiosis.tools.entitymatcher.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
-import com.ubiosis.tools.hamcrest.entitymatcher.RegexMatcher;
+import com.ubiosis.tools.entitymatcher.hamcrest.RegexMatcher;
 
 /**
  * AssertModel's field setting.
@@ -91,8 +91,12 @@ public @interface AssertField {
             public Matcher<?> matcher(Object o){
                 return (Matcher<?>)o;
             }
-        }; 
-
+        },
+        CONDITION{
+            @Override
+            public Matcher<?> matcher(Object o){ return null; }
+        };
+        
         /**
          * asserting 
          * 
