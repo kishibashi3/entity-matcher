@@ -7,8 +7,8 @@ Configuration:
         pattern: "%d{yyyy/MM/dd HH:mm:ss.SSS} %-5level - %m%n"
     RollingFile:
       name: "file"
-      fileName: "${basedir}/logs/${project.build.finalName}.log"
-      filePattern: "${basedir}/logs/%d{yyyy-MM-dd}_${project.build.finalName}.log.gz"
+      fileName: "logs/entitymatcher.log"
+      filePattern: "logs/%d{yyyy-MM-dd}_entitymatcher.log.gz"
       PatternLayout:
         pattern: "%d{yyyy/MM/dd HH:mm:ss.SSS} %-5level - %m%n"
       Policies:

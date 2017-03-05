@@ -36,8 +36,7 @@ import com.ubiosis.tools.entitymatcher.model.AssertModel;
  * JUnit Matcher of Every Entities.
  * 
  * @author ishibashi.kazuhiro@u-biosis.com
- * @param <M>
- *            asserting model class type.
+ * @param <M> asserting model class type.
  * @see AssertModel
  */
 public class EntityMatcher<M> extends BaseMatcher<M> {
@@ -72,8 +71,8 @@ public class EntityMatcher<M> extends BaseMatcher<M> {
     /**
      * assert factory method.
      * 
-     * @param expected
-     *            expected object.
+     * @param <M> model type.
+     * @param expected expected object.
      * @return matcher
      */
     @Factory

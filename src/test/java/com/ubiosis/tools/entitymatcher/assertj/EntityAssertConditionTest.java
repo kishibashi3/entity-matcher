@@ -18,7 +18,6 @@ package com.ubiosis.tools.entitymatcher.assertj;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.assertj.core.api.Condition;
@@ -27,15 +26,21 @@ import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
 import com.ubiosis.tools.entitymatcher.model.AssertField;
+import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
 import com.ubiosis.tools.entitymatcher.model.AssertModel;
 import com.ubiosis.tools.entitymatcher.model.AssertModels;
-import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * test for AssertJ EntityAssertCondition.
+ * 
+ * @author ishibashi.kazuhiro@u-biosis.com
+ *
+ */
 @Log4j2
 public class EntityAssertConditionTest {
 
@@ -47,8 +52,6 @@ public class EntityAssertConditionTest {
     @Test
     public void test() {
         Model m1 = new Model(1, "aaa");
-        Model m2 = new Model(2, "bbb");
-        List<Model> list = Arrays.asList(m1, m2);
 
         ModelAssertModel am = new ModelAssertModel(new Condition<>(l -> l < 3, " less than 3"), "[a-z]{3}");
 
@@ -67,7 +70,9 @@ public class EntityAssertConditionTest {
     @AllArgsConstructor
     @Data
     public static class Model {
+
         private long id;
+
         private String name;
 
     }
@@ -76,8 +81,10 @@ public class EntityAssertConditionTest {
     @Data
     @AssertModels(getter = false)
     public static class ModelAssertModel implements AssertModel<Model> {
+
         @AssertField(rule = Rule.CONDITION)
         private Condition<Long> id;
+
         @AssertField(skipIfNull = true, rule = Rule.REGEX)
         private String name;
     }
@@ -87,13 +94,16 @@ public class EntityAssertConditionTest {
     @Data
     @AssertModels(getter = false)
     public static class ModelAssertModel2 implements AssertModel<Model> {
+
         private Long id;
+
         @AssertField(skipIfNull = true, rule = Rule.REGEX)
         private String name;
     }
 
     @Data
     public static class Config {
+
         List<ModelAssertModel2> models = new ArrayList<>();
     }
 }

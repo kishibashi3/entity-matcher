@@ -12,6 +12,14 @@ import com.ubiosis.tools.entitymatcher.model.AssertModels;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Core entity-matcher logic.
+ * 
+ * @author ishibashi.kazuhiro@u-biosis.com
+ *
+ * @param <M> model type.
+ * @param <V> matcher type.
+ */
 @Log4j2
 public class EntityMatchingExtractor<M, V> {
 

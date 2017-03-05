@@ -24,6 +24,7 @@ tasks.withType(AbstractCompile) each {
 	it.options.encoding = "UTF-8"
 }
 
+
 repositories {
 	mavenCentral()
 }
@@ -47,5 +48,28 @@ dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.12'
 	testCompile group: 'org.yaml', name: 'snakeyaml', version: '1.18'
 	
+}
+
+checkstyle {
+	toolVersion = "7.5.1"
+	showViolations = true
+	configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+}
+
+checkstyleTest {
+	configFile = file("config/checkstyle/checkstyle-test.xml")
+}
+
+findbugs {
+	toolVersion = "3.0.1"
+	effort = "max"
+}
+
+tasks.withType(FindBugs) {
+	reports {
+		xml.enabled = false
+		html.enabled = true
+	}
+	pluginClasspath = project.configurations.findbugsPlugins
 }
 

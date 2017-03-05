@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,18 +20,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-
-import com.ubiosis.tools.entitymatcher.hamcrest.RegexMatcher;
-
 /**
  * AssertModel's field setting.
  * 
  * @author ishibashi.kazuhiro@u-biosis.com
  * @see ../AssertModel
- *
  */
+
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AssertField {
@@ -50,59 +45,29 @@ public @interface AssertField {
      */
     Rule rule() default Rule.IS;
 
-
     /**
      * Asserting rules.
      */
-    public enum Rule{
+    enum Rule {
         /**
          * assert by Asserts.is
          */
-        IS {
-            @Override
-            public Matcher<?> matcher(Object o){
-                return Matchers.is(o);
-            }
-        } , 
+        IS,
         /**
          * assert by Asserts.compare
          */
-        COMPARE{
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            @Override
-            public Matcher<?> matcher(Object o){
-                return Matchers.comparesEqualTo((Comparable)o);
-            }
-        }, 
+        COMPARE,
         /**
          * assert by RegexMatcher.
          */
-        REGEX {
-            @Override
-            public Matcher<?> matcher(Object o){
-                return new RegexMatcher<>(o.toString());
-            }
-        },
+        REGEX,
         /**
-         * assert by value itself.
+         * assert by value itself(Matcher).
          */
-        MATCHER {
-            @Override
-            public Matcher<?> matcher(Object o){
-                return (Matcher<?>)o;
-            }
-        },
-        CONDITION{
-            @Override
-            public Matcher<?> matcher(Object o){ return null; }
-        };
-        
+        MATCHER,
         /**
-         * asserting 
-         * 
-         * @param o
-         * @return
+         * assert by value itself(Condition).
          */
-        public abstract Matcher<?> matcher(Object o);
+        CONDITION
     }
 }

@@ -5,8 +5,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 
+/**
+ * private field and getter's accessor.
+ * 
+ * @author ishibashi.kazuhiro@u-biosis.com
+ *
+ */
 public class Accessor {
 
+    /**
+     * getters accessor.
+     * 
+     * @param <M> model type
+     * @param <T> attribute type
+     * @param name method name.
+     * @return accessor function.
+     */
     @SuppressWarnings("unchecked")
     public static <M, T> Function<M, T> get(String name) {
 
@@ -28,6 +42,15 @@ public class Accessor {
 
     }
 
+    /**
+     * getter accessor.
+     * 
+     * @param <M> model type.
+     * @param <T> attribute type.
+     * @param type model type.
+     * @param name method name.
+     * @return accessor function.
+     */
     @SuppressWarnings("unchecked")
     public static <M, T> Function<M, T> get(Class<M> type, String name) {
 
@@ -51,6 +74,14 @@ public class Accessor {
         throw new NoSuchMethodError(name);
     }
 
+    /**
+     * field accessor.
+     * 
+     * @param <M> model type.
+     * @param <T> attribute type.
+     * @param name field name.
+     * @return accessor function.
+     */
     @SuppressWarnings("unchecked")
     public static <M, T> Function<M, T> field(String name) {
 
@@ -72,6 +103,15 @@ public class Accessor {
 
     }
 
+    /**
+     * field accecssor.
+     * 
+     * @param <M> model type.
+     * @param <T> attribute type.
+     * @param type model type.
+     * @param name field name.
+     * @return accessor function
+     */
     @SuppressWarnings("unchecked")
     public static <M, T> Function<M, T> field(Class<M> type, String name) {
 
@@ -95,6 +135,12 @@ public class Accessor {
         throw new NoSuchFieldError(name);
     }
 
+    /**
+     * field name to getter name.
+     * 
+     * @param fieldName field name
+     * @return getter name
+     */
     public static String getterName(String fieldName) {
         return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }

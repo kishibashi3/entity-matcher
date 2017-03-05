@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,32 +35,38 @@ import lombok.ToString;
  */
 @AllArgsConstructor
 @ToString
-public class AttributeMatcher<M,A> extends BaseMatcher<M>{
-    
+public class AttributeMatcher<M, A> extends BaseMatcher<M> {
+
     private String title;
-    private Function<M,A> getter;
+
+    private Function<M, A> getter;
+
     private Matcher<A> matcher;
-    
+
     @Override
     public void describeTo(Description desc) {
         desc.appendText(title + " ");
         matcher.describeTo(desc);
     }
+
     @Override
     @SuppressWarnings("unchecked")
     public boolean matches(Object actual) {
-        return matcher.matches( getter.apply((M)actual) );
+        return matcher.matches(getter.apply((M) actual));
     }
+
     /**
      * assert method factory.
      * 
+     * @param <M> model type.
+     * @param <A> attribute type.
      * @param title assert description about attribute to assert.
      * @param getter converter of model to attribute.
      * @param matcher attribute matcher.
-     * @return
+     * @return matcher
      */
     @Factory
-    public static <M,A> Matcher<M> expand(String title, Function<M,A> getter, Matcher<A> matcher){
+    public static <M, A> Matcher<M> expand(String title, Function<M, A> getter, Matcher<A> matcher) {
         return new AttributeMatcher<>(title, getter, matcher);
     }
 }
