@@ -1,4 +1,4 @@
-package com.ubiosis.tools.entitymatcher.annotation;
+package com.ubiosis.tools.entitymatcher.core;
 
 import java.util.Objects;
 import java.util.function.Function;

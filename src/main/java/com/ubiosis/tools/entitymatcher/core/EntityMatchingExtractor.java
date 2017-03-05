@@ -8,7 +8,6 @@ import com.ubiosis.tools.entitymatcher.annotation.AssertField;
 import com.ubiosis.tools.entitymatcher.annotation.AssertField.Rule;
 import com.ubiosis.tools.entitymatcher.annotation.AssertModel;
 import com.ubiosis.tools.entitymatcher.annotation.AssertModels;
-import com.ubiosis.tools.entitymatcher.annotation.TriFunction;
 
 import lombok.extern.log4j.Log4j2;
 
