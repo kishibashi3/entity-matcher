@@ -9,6 +9,7 @@ buildscript {
 
 // basic plugins
 apply plugin: "java"
+apply plugin: "maven"
 apply plugin: "eclipse"
 apply plugin: "checkstyle"
 apply plugin: "findbugs"
@@ -72,5 +73,32 @@ tasks.withType(FindBugs) {
 		html.enabled = true
 	}
 	pluginClasspath = project.configurations.findbugsPlugins
+}
+
+//MavenRepository identity setting
+group = 'com.ubiosis.tools'
+archivesBaseName = 'entity-matcher'
+version = '0.0.1'
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			repository(url: "file:${projectDir}")
+		}
+	}
+}
+[install.repositories.mavenInstaller, uploadArchives.repositories.mavenDeployer]*.pom*.whenConfigured { pom ->
+
+	pom.project {
+		inceptionYear '2017'
+		packaging 'jar'
+		licenses {
+			license {
+				name 'The Apache Software License, Version 2.0'
+				url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+				distribution 'repo'
+			}
+		}
+	}
 }
 
