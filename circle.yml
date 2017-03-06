@@ -1,6 +1,6 @@
 dependencies:
   override:
-    - ./gradlew -v
+    - gradle -v
 general:
   artifacts:
     - "build/reports"
