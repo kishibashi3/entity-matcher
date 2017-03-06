@@ -19,8 +19,28 @@ EntityMatcher is a hamcrest custom matcher to test any model classes.
 0. each field can assert by equals, compare, regex, or any matcher. set @AssertFields(rule=Rule.?).
 0. if field is null, assert null as a value. if skip assertion, set @AssertField(skipIfNull=true).
 
+## repository
+
+```gradle
+repositories { 
+	mavenRepo urls: 'https://github.com/kishibashi3/entity-matcher/raw/master/'
+} 
+ 
+dependencies {
+	compile 'com.ubiosis.tools:entity-matcher:0.0.1'
+}
+```
+
 
 ## dependency
+
+m/o|lib | description
+---|---|---
+m|Guava | Collection Utilities
+m|Log4j2 | logging
+m|Jackson-dataformat-yaml | logging yaml configuration
+o|hamcrest | if use hamcrest matcher
+o|AssertJ | if use AsesrtJ matcher
 
 
 
