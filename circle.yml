@@ -1,7 +1,6 @@
 dependencies:
   override:
-    - ./gradlew -v
-    - ./gradlew resolveDependencies
+    - gradle -v
 general:
   artifacts:
     - "build/reports"
@@ -13,6 +12,11 @@ machine:
   post:
     - sudo service mysql stop
     - sudo service postgresql stop
-deployment:
-  release:
-    branch: master
+test:
+  override:
+    - gradle check
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/:
+        parallel: true
+    - find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
+        parallel: true
