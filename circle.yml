@@ -14,7 +14,7 @@ machine:
     - sudo service postgresql stop
 test:
   override:
-    - ./gradlew check
+    - gradle check
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/:
         parallel: true
