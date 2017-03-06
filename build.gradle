@@ -27,6 +27,7 @@ tasks.withType(AbstractCompile) each {
 
 repositories {
 	mavenCentral()
+	maven { url "https://plugins.gradle.org/m2/" }
 }
 
 dependencies {
