@@ -1,6 +1,6 @@
 [![CircleCI](https://circleci.com/gh/kishibashi3/entity-matcher/tree/master.svg?style=shield)](https://circleci.com/gh/kishibashi3/entity-matcher/tree/master)
 
-entity matcher
+test utils for hamcrest and assertj.
 ===
 
 EntityMatcher is a hamcrest custom matcher to test any model classes.

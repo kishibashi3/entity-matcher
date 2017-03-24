@@ -25,8 +25,7 @@ import org.hamcrest.Description;
  * 
  * @author ishibashi.kazuhiro@u-biosis.com
  *
- * @param <T>
- *            asserting object type.
+ * @param <T> asserting object type.
  */
 public class RegexMatcher<T> extends BaseMatcher<T> {
 

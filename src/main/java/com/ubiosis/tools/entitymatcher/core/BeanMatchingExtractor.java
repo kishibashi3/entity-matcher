@@ -1,14 +1,18 @@
 package com.ubiosis.tools.entitymatcher.core;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import com.ubiosis.tools.entitymatcher.model.AssertField;
-import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
-import com.ubiosis.tools.entitymatcher.model.AssertModel;
-import com.ubiosis.tools.entitymatcher.model.AssertModels;
+import com.ubiosis.tools.entitymatcher.model.Criteria;
+import com.ubiosis.tools.entitymatcher.model.Criteria.Rule;
+import com.ubiosis.tools.entitymatcher.model.ExpectedCriteria;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -21,43 +25,69 @@ import lombok.extern.log4j.Log4j2;
  * @param <V> matcher type.
  */
 @Log4j2
-public class EntityMatchingExtractor<M, V> {
+public class BeanMatchingExtractor<E extends ExpectedCriteria<M>, M> {
 
-    Function4<String, Rule, Object, Function<M, ?>, V> function;
+    private static final Map<Class<?>, BeanMatchingExtractor<?, ?>> EXTRACTORS = new HashMap<>();
 
-    public EntityMatchingExtractor(Function4<String, Rule, Object, Function<M, ?>, V> function) {
-        this.function = function;
+    @SuppressWarnings("unchecked")
+    public static <E extends ExpectedCriteria<M>, M> BeanMatchingExtractor<E, M> getExtractor(Class<E> type) {
+        return (BeanMatchingExtractor<E, M>) EXTRACTORS.computeIfAbsent(
+                type, k -> new BeanMatchingExtractor<>(type));
+
     }
 
-    public List<V> extract(AssertModel<M> expected) {
-        List<V> matchers = new ArrayList<>();
+    private final List<BiFunction<E, Function4<String, Rule, Object, Function<M, ?>, ?>, ?>> matchers;
 
-        AssertModels models = expected.getClass().getAnnotation(AssertModels.class);
-        boolean getter = models == null ? false : models.getter();
+    public BeanMatchingExtractor(Class<E> type) {
+
+        final Criteria _criteria = type.getAnnotation(Criteria.class);
+        final boolean _byfield = _criteria == null ? Criteria.DEFAULT_BY_FIELD : _criteria.byField();
+        final boolean _skip = _criteria == null ? Criteria.DEFAULT_SKIP_IF_NULL : _criteria.skipIfNull();
+        final Rule _rule = _criteria == null ? Criteria.DEFAULT_RULE : _criteria.rule();
+
+        matchers = new ArrayList<>();
 
         try {
-            for (Class<?> c = expected.getClass(); c != Object.class; c = c.getSuperclass()) {
+            for (Class<?> c = type; c != Object.class; c = c.getSuperclass()) {
                 for (Field f : c.getDeclaredFields()) {
+                    if (Modifier.isStatic(f.getModifiers())) continue;
                     f.setAccessible(true);
-                    Object field = f.get(expected);
+
+                    Function<E, ?> expected = o -> {
+                        try {
+                            return f.get(o);
+                        } catch (IllegalAccessException e) {
+                            return new Error("fail to get expected attribute.", e);
+                        }
+                    };
                     String name = f.getName();
 
-                    AssertField af = f.getAnnotation(AssertField.class);
+                    Criteria criteria = f.getAnnotation(Criteria.class);
+                    boolean byfield = criteria == null ? _byfield : criteria.byField();
+                    boolean skip = criteria == null ? _skip : criteria.skipIfNull();
+                    Rule rule = criteria == null ? _rule : criteria.rule();
 
-                    Function<M, ?> actualGetter = getter
-                            ? m -> Accessor.get(Accessor.getterName(name)).apply(m)
-                            : m -> Accessor.field(name).apply(m);
+                    Function<M, ?> actual = byfield
+                            ? m -> Accessor.field(name).apply(m)
+                            : m -> Accessor.get(name).apply(m);
 
-                    if (af == null || !af.skipIfNull() || field != null) {
-                        Rule rule = af == null ? Rule.IS : af.rule();
-                        matchers.add(function.apply(name, rule, field, actualGetter));
-                    }
+                    matchers.add((exp, function) -> {
+                        Object expField = expected.apply(exp);
+                        return skip && expField == null
+                                ? null : function.apply(name, rule, expField, actual);
+                    });
                 }
             }
-        } catch (SecurityException | IllegalAccessException e) {
+        } catch (SecurityException e) {
             throw new AssertionError("illegal assert model", e);
         }
         matchers.forEach(m -> log.info("matcher = {}", m));
-        return matchers;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <V> List<V> extract(E expected, Function4<String, Rule, Object, Function<M, ?>, V> function) {
+        return matchers.stream().map(f -> (V) f.apply(expected, function))
+                .filter(l -> l != null)
+                .collect(Collectors.toList());
     }
 }

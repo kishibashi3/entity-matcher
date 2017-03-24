@@ -18,6 +18,7 @@ package com.ubiosis.tools.entitymatcher.hamcrest;
 import static com.ubiosis.tools.entitymatcher.hamcrest.AttributeMatcher.expand;
 import static org.hamcrest.CoreMatchers.allOf;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -28,18 +29,20 @@ import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 
 import com.google.common.collect.ImmutableMap;
-import com.ubiosis.tools.entitymatcher.core.EntityMatchingExtractor;
-import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
-import com.ubiosis.tools.entitymatcher.model.AssertModel;
+import com.ubiosis.tools.entitymatcher.core.BeanMatchingExtractor;
+import com.ubiosis.tools.entitymatcher.model.Criteria.Rule;
+import com.ubiosis.tools.entitymatcher.model.ExpectedCriteria;
 
 /**
- * JUnit Matcher of Every Entities.
+ * Hamcreset Matcher for Every Bean Classes.
  * 
  * @author ishibashi.kazuhiro@u-biosis.com
  * @param <M> asserting model class type.
- * @see AssertModel
+ * @see ExpectedCriteria
  */
-public class EntityMatcher<M> extends BaseMatcher<M> {
+public class BeanMatcher<E extends ExpectedCriteria<M>, M> extends BaseMatcher<M> {
+
+    private static final Map<Class<?>, BeanMatchingExtractor<?, ?>> extractors = new HashMap<>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     Map<Rule, Function<Object, Matcher<?>>> functions = ImmutableMap.of(
@@ -50,11 +53,14 @@ public class EntityMatcher<M> extends BaseMatcher<M> {
 
     private final Matcher<M> matcher;
 
-    public EntityMatcher(AssertModel<M> expected) {
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        EntityMatchingExtractor<M, Matcher<? super M>> extractor = new EntityMatchingExtractor<M, Matcher<? super M>>(
-                (name, rule, field, actGetter) -> expand(name, (Function) actGetter, functions.get(rule).apply(field)));
-        matcher = allOf(extractor.extract(expected));
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public BeanMatcher(E expected) {
+        Class<E> type = (Class<E>) expected.getClass();
+        BeanMatchingExtractor<E, M> extractor = BeanMatchingExtractor.getExtractor(type);
+
+        matcher = (Matcher<M>) allOf(extractor.extract(expected,
+                (name, rule, field, actGetter) -> expand(name, (Function) actGetter, functions.get(rule).apply(field))));
+
     }
 
     @Override
@@ -69,14 +75,14 @@ public class EntityMatcher<M> extends BaseMatcher<M> {
     }
 
     /**
-     * assert factory method.
+     * matching factory method.
      * 
      * @param <M> model type.
      * @param expected expected object.
      * @return matcher
      */
     @Factory
-    public static <M> Matcher<M> assertEntity(AssertModel<M> expected) {
-        return new EntityMatcher<>(expected);
+    public static <E extends ExpectedCriteria<M>, M> Matcher<M> matches(E expected) {
+        return new BeanMatcher<>(expected);
     }
 }

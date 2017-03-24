@@ -23,11 +23,11 @@ public class Accessor {
      */
     @SuppressWarnings("unchecked")
     public static <M, T> Function<M, T> get(String name) {
-
+        String gettername = Accessor.getterName(name);
         return m -> {
             for (Class<?> c = m.getClass(); c != Object.class; c = c.getSuperclass()) {
                 try {
-                    Method method = c.getDeclaredMethod(name);
+                    Method method = c.getDeclaredMethod(gettername);
                     method.setAccessible(true);
                     return (T) method.invoke(m);
 
@@ -53,10 +53,11 @@ public class Accessor {
      */
     @SuppressWarnings("unchecked")
     public static <M, T> Function<M, T> get(Class<M> type, String name) {
+        String gettername = Accessor.getterName(name);
 
         for (Class<?> c = type; c != Object.class; c = c.getSuperclass()) {
             try {
-                Method method = c.getDeclaredMethod(name);
+                Method method = c.getDeclaredMethod(gettername);
                 method.setAccessible(true);
                 return m -> {
                     try {

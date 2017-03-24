@@ -25,10 +25,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
-import com.ubiosis.tools.entitymatcher.model.AssertField;
-import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
-import com.ubiosis.tools.entitymatcher.model.AssertModel;
-import com.ubiosis.tools.entitymatcher.model.AssertModels;
+import com.ubiosis.tools.entitymatcher.model.Criteria;
+import com.ubiosis.tools.entitymatcher.model.Criteria.Rule;
+import com.ubiosis.tools.entitymatcher.model.ExpectedCriteria;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,7 +54,7 @@ public class EntityAssertConditionTest {
 
         ModelAssertModel am = new ModelAssertModel(new Condition<>(l -> l < 3, " less than 3"), "[a-z]{3}");
 
-        assertThat(m1).is(EntityAssertCondition.assertEntity(am));
+        assertThat(m1).is(EntityAssertCondition.matches(am));
 
     }
 
@@ -79,25 +78,25 @@ public class EntityAssertConditionTest {
 
     @AllArgsConstructor
     @Data
-    @AssertModels(getter = false)
-    public static class ModelAssertModel implements AssertModel<Model> {
+    @Criteria(byField = true)
+    public static class ModelAssertModel implements ExpectedCriteria<Model> {
 
-        @AssertField(rule = Rule.CONDITION)
+        @Criteria(rule = Rule.CONDITION)
         private Condition<Long> id;
 
-        @AssertField(skipIfNull = true, rule = Rule.REGEX)
+        @Criteria(skipIfNull = true, rule = Rule.REGEX)
         private String name;
     }
 
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
-    @AssertModels(getter = false)
-    public static class ModelAssertModel2 implements AssertModel<Model> {
+    @Criteria(byField = true)
+    public static class ModelAssertModel2 implements ExpectedCriteria<Model> {
 
         private Long id;
 
-        @AssertField(skipIfNull = true, rule = Rule.REGEX)
+        @Criteria(skipIfNull = true, rule = Rule.REGEX)
         private String name;
     }
 

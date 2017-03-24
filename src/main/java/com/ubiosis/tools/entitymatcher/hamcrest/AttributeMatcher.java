@@ -39,7 +39,7 @@ public class AttributeMatcher<M, A> extends BaseMatcher<M> {
 
     private String title;
 
-    private Function<M, A> getter;
+    private Function<? super M, ? extends A> getter;
 
     private Matcher<A> matcher;
 

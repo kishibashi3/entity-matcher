@@ -15,7 +15,7 @@
  */
 package com.ubiosis.tools.entitymatcher.model;
 
-import com.ubiosis.tools.entitymatcher.hamcrest.EntityMatcher;
+import com.ubiosis.tools.entitymatcher.hamcrest.BeanMatcher;
 
 /**
  * Mark interface to indicate the class is an AssertModel of {@code <M>}.
@@ -35,9 +35,9 @@ import com.ubiosis.tools.entitymatcher.hamcrest.EntityMatcher;
  * 
  * @author ishibashi.kazuhirio@u-biosis.com
  * @param <M> Model type to assert.
- * @see EntityMatcher
- * @see AssertField
+ * @see BeanMatcher
+ * @see Criteria
  */
-public interface AssertModel<M> {
+public interface ExpectedCriteria<M> {
 
 }

@@ -9,11 +9,11 @@ import org.assertj.core.util.Preconditions;
  * 
  * @author ishibashi.kazuhiro@u-biosis.com
  *
- * @param <T> 1st param
- * @param <U> 2nd param
- * @param <V> 3rd param
- * @param <W> 4th param
- * @param <R> return
+ * @param <T> 1st param type
+ * @param <U> 2nd param type
+ * @param <V> 3rd param type
+ * @param <W> 4th param type
+ * @param <R> return type
  */
 @FunctionalInterface
 public interface Function4<T, U, V, W, R> {

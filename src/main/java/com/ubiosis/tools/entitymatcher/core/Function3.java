@@ -2,6 +2,8 @@ package com.ubiosis.tools.entitymatcher.core;
 
 import java.util.function.Function;
 
+import org.apache.commons.lang3.tuple.Triple;
+
 import com.google.common.base.Preconditions;
 
 /**
@@ -26,6 +28,11 @@ public interface Function3<T, U, V, R> {
      * @return return
      */
     R apply(T t, U u, V v);
+
+    default R apply(Triple<T, U, V> tuple) {
+
+        return apply(tuple.getLeft(), tuple.getMiddle(), tuple.getRight());
+    }
 
     /**
      * function connector.

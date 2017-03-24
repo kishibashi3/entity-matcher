@@ -15,7 +15,7 @@
  */
 package com.ubiosis.tools.entitymatcher.hamcrest;
 
-import static com.ubiosis.tools.entitymatcher.hamcrest.EntityMatcher.assertEntity;
+import static com.ubiosis.tools.entitymatcher.hamcrest.BeanMatcher.matches;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasItem;
 import static org.junit.Assert.assertThat;
@@ -26,10 +26,9 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
-import com.ubiosis.tools.entitymatcher.model.AssertField;
-import com.ubiosis.tools.entitymatcher.model.AssertField.Rule;
-import com.ubiosis.tools.entitymatcher.model.AssertModel;
-import com.ubiosis.tools.entitymatcher.model.AssertModels;
+import com.ubiosis.tools.entitymatcher.model.Criteria;
+import com.ubiosis.tools.entitymatcher.model.Criteria.Rule;
+import com.ubiosis.tools.entitymatcher.model.ExpectedCriteria;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -40,7 +39,7 @@ import lombok.Data;
  * @author ishibashi.kazuhiro@u-biosis.com
  *
  */
-public class EntityMatcherTest {
+public class BeanMatcherTest {
 
     @Test
     public void test() {
@@ -50,7 +49,7 @@ public class EntityMatcherTest {
 
         ModelAssertModel am = new ModelAssertModel(greaterThan(1L), "[b-z]{3}");
 
-        assertThat(list, hasItem(assertEntity(am)));
+        assertThat(list, hasItem(matches(am)));
     }
 
     @AllArgsConstructor
@@ -64,12 +63,12 @@ public class EntityMatcherTest {
 
     @AllArgsConstructor
     @Data
-    @AssertModels(getter = true)
-    public static class ModelAssertModel implements AssertModel<Model> {
-        @AssertField(rule = Rule.MATCHER)
+    @Criteria(byField = false)
+    public static class ModelAssertModel implements ExpectedCriteria<Model> {
+        @Criteria(rule = Rule.MATCHER)
         private Matcher<Long> id;
 
-        @AssertField(skipIfNull = true, rule = Rule.REGEX)
+        @Criteria(skipIfNull = true, rule = Rule.REGEX)
         private String name;
 
     }

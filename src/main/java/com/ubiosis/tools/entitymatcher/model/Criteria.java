@@ -27,16 +27,27 @@ import java.lang.annotation.Target;
  * @see ../AssertModel
  */
 
-@Target(ElementType.FIELD)
+@Target({ ElementType.FIELD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface AssertField {
+public @interface Criteria {
+
+    boolean DEFAULT_SKIP_IF_NULL = true;
+    boolean DEFAULT_BY_FIELD = true;
+    Rule DEFAULT_RULE = Rule.IS;
 
     /**
      * assertion about null value.
      * 
      * @return {@code true}: skip assertion. {@code false}: assert null as a value.
      */
-    boolean skipIfNull() default true;
+    boolean skipIfNull() default DEFAULT_SKIP_IF_NULL;
+
+    /**
+     * model access.
+     * 
+     * @return {@code true}: access by field. {@code false}: access by getter.
+     */
+    boolean byField() default DEFAULT_BY_FIELD;
 
     /**
      * asserting rule.
@@ -50,15 +61,15 @@ public @interface AssertField {
      */
     enum Rule {
         /**
-         * assert by Asserts.is
+         * assert by equals
          */
         IS,
         /**
-         * assert by Asserts.compare
+         * assert by compareTo
          */
         COMPARE,
         /**
-         * assert by RegexMatcher.
+         * assert by Regular Expression
          */
         REGEX,
         /**

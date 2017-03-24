@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 
-import com.ubiosis.tools.entitymatcher.hamcrest.EntityMatcherTest.Model;
+import com.ubiosis.tools.entitymatcher.hamcrest.BeanMatcherTest.Model;
 
 public class AttributeMatcherTest {
 
